@@ -1,49 +1,49 @@
-import React from "react";
-import useFetch from "../hooks/useFetch";
-import { Link } from "react-router-dom";
-import dayjs from "dayjs";
+import React, { useState, useEffect } from "react";
+import sanityClient from "../Client";
+import BlockContent from "@sanity/block-content-to-react";
 
-export default function OtherNews() {
-  const { loading, error, data } = useFetch(
-    "http://localhost:1337/api/reviews?sort=publishedAt:desc&filters[featured][$eq]=False"
-  );
+const OtherNews = () => {
+  const [featuredPosts, setFeaturedPosts] = useState([]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error. Refresh and try again.</p>;
+  useEffect(() => {
+    const fetchFeaturedPosts = async () => {
+      try {
+        // Fetch blog posts with the category 'featured'
+        const data = await sanityClient.fetch(`
+          *[_type == 'post'] {
+            title,
+            slug,
+            publishedAt,
+            body
+          }
+        `);
+        setFeaturedPosts(data);
+      } catch (error) {
+        console.error("Error fetching featured blog posts:", error);
+      }
+    };
+
+    fetchFeaturedPosts();
+  }, []);
+
+  console.log(featuredPosts);
 
   return (
-    <>
-      <h1>Other News</h1>
-      {data.slice(0, 4).map((review) => (
-        <div key={review.id} className="review-card">
-          <h2>{review.attributes.Title}</h2>
-
-          <small>
-            {dayjs(review.attributes.publishedAt).format("MMMM D, YYYY h:mm A")}
-          </small>
-
-          <p>
-            {review.attributes.Body.substring(0, 200)}... <br />
-            <Link to={`/article/${review.id}`}>Read more</Link>
-          </p>
-          <hr />
+    <div className="featuredArticle">
+      <h1>
+        <span>Other News</span>
+      </h1>
+      {featuredPosts.map((post) => (
+        <div key={post.slug.current} className="post">
+          <h2>{post.title}</h2>
+          <small>{new Date(post.publishedAt).toLocaleDateString()}</small>
+          <BlockContent blocks={post.body} />
+          {/* <ReactMarkdown>{post.body}</ReactMarkdown>
+          <div dangerouslySetInnerHTML={{ __html: post.body }} /> */}
         </div>
       ))}
-
-      {data.slice(4, 5).map((review) => (
-        <div key={review.id} className="review-card">
-          <h2>{review.attributes.Title}</h2>
-
-          <small>
-            {dayjs(review.attributes.publishedAt).format("MMMM D, YYYY h:mm A")}
-          </small>
-
-          <p>
-            {review.attributes.Body.substring(0, 200)}... <br />
-            <Link to={`/article/${review.id}`}>Read more</Link>
-          </p>
-        </div>
-      ))}
-    </>
+    </div>
   );
-}
+};
+
+export default OtherNews;

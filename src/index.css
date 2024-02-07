@@ -85,14 +85,19 @@ nav {
 
 /* body and header text */
 h1 {
-  color: #fff;
+  color: #000;
   font-size: 1rem;
   text-transform: uppercase;
   font-weight: normal;
   letter-spacing: 2px;
-  border-bottom: solid 3px #5bcefa;
-  padding-left: 30px;
-  margin: 20px 0 10px 0;
+  margin: 20px 0 0px 0;
+  padding-top: 8px;
+  border-top: solid 3px #5bcefa;
+}
+
+h1 span {
+  background-color: #5bcefa;
+  padding: 10px;
 }
 
 /* homepage-specific items */
@@ -113,7 +118,7 @@ h1 {
 }
 
 main {
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   max-width: 2000px;
 }
@@ -130,11 +135,16 @@ main {
   grid-row: 1;
 }
 
+.post {
+  border-bottom: 2px solid #5bcefa;
+  padding: 15px 0 20px 0;
+}
+
 .featuredArticle img,
 .individual-review img {
   height: 375px;
   float: left;
-  padding: 0 15px 5px 0;
+  margin: 0 15px 5px 0;
 }
 
 .additional-articles {
@@ -228,4 +238,8 @@ footer {
   border-radius: 0 10px 10px 0;
   font-weight: bold;
   font-size: 1rem;
+}
+
+li {
+  margin-left: 30px;
 }
