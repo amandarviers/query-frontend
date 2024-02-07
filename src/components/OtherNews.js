@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import sanityClient from "../Client";
-import BlockContent from "@sanity/block-content-to-react";
+import { Link } from "react-router-dom";
 
 const OtherNews = () => {
   const [featuredPosts, setFeaturedPosts] = useState([]);
@@ -13,8 +13,10 @@ const OtherNews = () => {
           *[_type == 'post'] {
             title,
             slug,
+            summary,
             publishedAt,
-            body
+            body,
+            author->{name}
           }
         `);
         setFeaturedPosts(data);
@@ -35,11 +37,15 @@ const OtherNews = () => {
       </h1>
       {featuredPosts.map((post) => (
         <div key={post.slug.current} className="post">
-          <h2>{post.title}</h2>
-          <small>{new Date(post.publishedAt).toLocaleDateString()}</small>
-          <BlockContent blocks={post.body} />
-          {/* <ReactMarkdown>{post.body}</ReactMarkdown>
-          <div dangerouslySetInnerHTML={{ __html: post.body }} /> */}
+          <p className="postDetails">
+            {new Date(post.publishedAt).toLocaleDateString()} &bull;{" "}
+            {post.author.name}
+          </p>
+          <h2>
+            <Link to={`/article/${post.slug.current}`}>{post.title}</Link>
+          </h2>
+          {post.summary}
+          {/* <BlockContent blocks={post.body} /> */}
         </div>
       ))}
     </div>

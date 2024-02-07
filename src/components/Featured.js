@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import sanityClient from "../Client";
-import BlockContent from "@sanity/block-content-to-react";
+import { Link } from "react-router-dom";
 
 const FeaturedBlogPosts = () => {
   const [featuredPosts, setFeaturedPosts] = useState([]);
@@ -8,11 +8,12 @@ const FeaturedBlogPosts = () => {
   useEffect(() => {
     const fetchFeaturedPosts = async () => {
       try {
-        // Fetch blog posts with the category 'featured' && featured == true] | order(publishedAt desc) [0]
         const data = await sanityClient.fetch(`
           *[_type == 'post' && featured == true] {
             title,
             slug,
+            summary,
+            author->{name},
             mainImage {
               _type,
               asset->{
@@ -42,13 +43,19 @@ const FeaturedBlogPosts = () => {
       {featuredPosts.map((post) => (
         <div key={post.slug.current} className="post">
           {post.mainImage !== undefined && (
-            <img src={post.mainImage.asset.url} alt={post.title} />
+            <p align="center">
+              <img src={post.mainImage.asset.url} alt={post.title} />
+            </p>
           )}
-          <h2>{post.title}</h2>
-          <small>{new Date(post.publishedAt).toLocaleDateString()}</small>
-          <BlockContent blocks={post.body} />
-          {/* <ReactMarkdown>{post.body}</ReactMarkdown>
-          <div dangerouslySetInnerHTML={{ __html: post.body }} /> */}
+          <p className="postDetails">
+            {new Date(post.publishedAt).toLocaleDateString()} &bull;{" "}
+            {post.author.name}
+          </p>
+          <h2>
+            <Link to={`/article/${post.slug.current}`}>{post.title}</Link>
+          </h2>
+          {post.summary}
+          {/* <BlockContent blocks={post.body} /> */}
         </div>
       ))}
     </div>
