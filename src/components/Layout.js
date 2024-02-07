@@ -3,7 +3,7 @@ import { Outlet, Link } from "react-router-dom";
 import Logo from "../static/logo.png";
 import React from "react";
 
-import { RiFacebookCircleFill } from "react-icons/ri";
+// import { RiFacebookCircleFill } from "react-icons/ri";
 import { AiFillTwitterCircle, AiFillInstagram } from "react-icons/ai";
 // import { BsSearchHeart } from "react-icons/bs";
 
@@ -29,9 +29,9 @@ export default function Layout() {
           <Link to="/photos">Photos</Link>
 
           <div className="socials">
-            <a href="https://facebook.com">
+            {/* <a href="https://facebook.com">
               <RiFacebookCircleFill size={30} />
-            </a>
+            </a> */}
             <a href="https://twitter.com">
               <AiFillTwitterCircle size={30} />
             </a>

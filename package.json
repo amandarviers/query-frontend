@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
+  "homepage": "https://thequery.amandaviers.com",
   "private": true,
   "dependencies": {
     "@sanity/block-content-to-react": "^3.0.0",
