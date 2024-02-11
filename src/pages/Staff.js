@@ -1,10 +1,10 @@
 import React from "react";
 
-export default function Contact() {
+export default function Staff() {
   return (
     <div>
       <h1>
-        <span>Contact</span>
+        <span>Staff Directory</span>
       </h1>
     </div>
   );

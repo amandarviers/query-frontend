@@ -8,9 +8,8 @@ const OtherNews = () => {
   useEffect(() => {
     const fetchFeaturedPosts = async () => {
       try {
-        // Fetch blog posts with the category 'featured'
         const data = await sanityClient.fetch(`
-          *[_type == 'post'] {
+          *[_type == 'post' && featured == false] | order(publishedAt desc) [0..2] {
             title,
             slug,
             summary,
@@ -28,15 +27,16 @@ const OtherNews = () => {
     fetchFeaturedPosts();
   }, []);
 
-  console.log(featuredPosts);
-
   return (
     <div className="featuredArticle">
       <h1>
-        <span>Other News</span>
+        <span>Recent News</span>
       </h1>
-      {featuredPosts.map((post) => (
-        <div key={post.slug.current} className="post">
+      {featuredPosts.map((post, index) => (
+        <div
+          key={post.slug.current}
+          className={index === featuredPosts.length - 1 ? "lastPost" : "post"}
+        >
           <p className="postDetails">
             {new Date(post.publishedAt).toLocaleDateString()} &bull;{" "}
             {post.author.name}
@@ -45,7 +45,6 @@ const OtherNews = () => {
             <Link to={`/article/${post.slug.current}`}>{post.title}</Link>
           </h2>
           {post.summary}
-          {/* <BlockContent blocks={post.body} /> */}
         </div>
       ))}
     </div>

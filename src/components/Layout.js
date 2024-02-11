@@ -1,13 +1,33 @@
 import { Outlet, Link } from "react-router-dom";
 
 import Logo from "../static/logo.png";
-import React from "react";
+import sanityClient from "../Client";
+import React, { useState, useEffect } from "react";
 
 import { RiFacebookCircleFill } from "react-icons/ri";
 import { AiFillTwitterCircle, AiFillInstagram } from "react-icons/ai";
-// import { BsSearchHeart } from "react-icons/bs";
 
 export default function Layout() {
+  const [categoryLinks, setCategoryLinks] = useState([]);
+
+  useEffect(() => {
+    const fetchCategoryLinks = async () => {
+      try {
+        const data = await sanityClient.fetch(`
+          *[_type == 'category'] | order(title asc) {
+            title,
+            slug,
+          }
+        `);
+        setCategoryLinks(data);
+      } catch (error) {
+        console.error("Error fetching featured blog posts:", error);
+      }
+    };
+
+    fetchCategoryLinks();
+  }, []);
+
   return (
     <>
       <header>
@@ -20,13 +40,13 @@ export default function Layout() {
 
           <Link to="/about">About</Link>
 
-          <Link to="/contact">Contact</Link>
+          {categoryLinks.map((cat) => (
+            <Link to={`/${cat.slug.current}`}>{cat.title}</Link>
+          ))}
 
           <Link to="/resources">Resources</Link>
 
-          <Link to="/videos">Videos</Link>
-
-          <Link to="/photos">Photos</Link>
+          <Link to="/archive">Archive</Link>
 
           <div className="socials">
             <a href="https://facebook.com">
@@ -49,40 +69,31 @@ export default function Layout() {
       <footer>
         <div className="footerContainer">
           <div className="footerLeft">
-            <p>
+            <p align="center">
               Kogi actually helvetica cred keytar occupy single-origin coffee
               asymmetrical gastropub cloud bread man bun messenger bag coloring
               book umami. Air plant distillery ennui, tbh mumblecore readymade
               fingerstache flexitarian pug try-hard ramps tacos bitters grailed.
               Beard listicle lo-fi lumbersexual.
             </p>
-            <div className="subscribe">
+            {/* <div className="subscribe">
               <input type="email" placeholder="Subscribe to receive updates" />
               <button type="submit" className="submit">
                 Submit
               </button>
-            </div>
+            </div> */}
             <p align="center">
-              <em>The Query &copy; 2023</em>
+              <em>The Query &copy; 2024</em>
             </p>
           </div>
           <div className="footerRight">
             <img src={Logo} alt="Logo" className="footerLogo" />
             <ul>
               <li>
-                <a href="#">Staff Directory</a>
+                <Link to="/staff">Staff Directory</Link>
               </li>
               <li>
-                <a href="#">Site Map</a>
-              </li>
-              <li>
-                <a href="#">Terms of Service</a>
-              </li>
-              <li>
-                <a href="#">Privacy Policy</a>
-              </li>
-              <li>
-                <a href="#">Contact Us</a>
+                <Link to="/contact">Contact Us</Link>
               </li>
             </ul>
           </div>

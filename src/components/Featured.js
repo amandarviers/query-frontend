@@ -3,13 +3,13 @@ import sanityClient from "../Client";
 import { Link } from "react-router-dom";
 
 const FeaturedBlogPosts = () => {
-  const [featuredPosts, setFeaturedPosts] = useState([]);
+  const [featuredPost, setFeaturedPost] = useState(null); // Change here
 
   useEffect(() => {
-    const fetchFeaturedPosts = async () => {
+    const fetchFeaturedPost = async () => {
       try {
         const data = await sanityClient.fetch(`
-          *[_type == 'post' && featured == true] {
+          *[_type == 'post' && featured == true] | order(publishedAt desc) [0] {
             title,
             slug,
             summary,
@@ -24,40 +24,42 @@ const FeaturedBlogPosts = () => {
             body
           }
         `);
-        setFeaturedPosts(data);
+        setFeaturedPost(data);
       } catch (error) {
         console.error("Error fetching featured blog posts:", error);
       }
     };
 
-    fetchFeaturedPosts();
+    fetchFeaturedPost();
   }, []);
-
-  console.log(featuredPosts);
 
   return (
     <div className="featuredArticle">
       <h1>
-        <span>Featured Articles</span>
+        <span>Featured Article</span>
       </h1>
-      {featuredPosts.map((post) => (
-        <div key={post.slug.current} className="post">
-          {post.mainImage !== undefined && (
+      {featuredPost && (
+        <div key={featuredPost.slug.current} className="lastPost">
+          {featuredPost.mainImage !== undefined && (
             <p align="center">
-              <img src={post.mainImage.asset.url} alt={post.title} />
+              <img
+                src={featuredPost.mainImage.asset.url}
+                alt={featuredPost.title}
+              />
             </p>
           )}
           <p className="postDetails">
-            {new Date(post.publishedAt).toLocaleDateString()} &bull;{" "}
-            {post.author.name}
+            {new Date(featuredPost.publishedAt).toLocaleDateString()} &bull;{" "}
+            {featuredPost.author.name}
           </p>
           <h2>
-            <Link to={`/article/${post.slug.current}`}>{post.title}</Link>
+            <Link to={`/article/${featuredPost.slug.current}`}>
+              {featuredPost.title}
+            </Link>
           </h2>
-          {post.summary}
-          {/* <BlockContent blocks={post.body} /> */}
+          {featuredPost.summary}
         </div>
-      ))}
+      )}
     </div>
   );
 };

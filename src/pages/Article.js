@@ -1,31 +1,62 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import useFetch from "../hooks/useFetch";
-import ReactMarkdown from "react-markdown";
+import sanityClient from "../Client";
+import BlockContent from "@sanity/block-content-to-react";
 
-export default function Article() {
-  const { id } = useParams();
-  const { loading, error, data } = useFetch(
-    "http://localhost:1337/api/reviews/" + id + "?populate=*"
-  );
+const ArticlePage = () => {
+  const [article, setArticle] = useState(null);
+  const { slug } = useParams();
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error. Refresh and try again.</p>;
+  useEffect(() => {
+    const fetchArticle = async () => {
+      try {
+        const data = await sanityClient.fetch(
+          `*[_type == 'post' && slug.current == $slug][0] {
+            title,
+            publishedAt,
+            body,
+            author->{name},
+            mainImage {
+              _type,
+              asset->{
+                url
+              }
+            },
+          }`,
+          { slug }
+        );
+
+        setArticle(data);
+      } catch (error) {
+        console.error("Error fetching article:", error);
+      }
+    };
+
+    fetchArticle();
+  }, [slug]);
+
+  if (!article) {
+    return <div>Loading...</div>;
+  }
+
+  const { title, publishedAt, body, author, mainImage } = article;
 
   return (
-    <div className="individual-review">
-      {data.attributes.Cover.data !== null && (
-        <img
-          alt=""
-          src={
-            "http://localhost:1337" + data.attributes.Cover.data.attributes.url
-          }
-        />
+    <div className="articlePage">
+      {mainImage !== undefined && (
+        <p align="center">
+          <img className="mainImage" src={mainImage.asset.url} alt={title} />
+        </p>
       )}
-      <h1>{data.attributes.Title}</h1>
-      <small>console list</small>
+      <p className="postDetails">
+        Published on {new Date(publishedAt).toLocaleDateString()} &bull;{" "}
+        {author.name}
+      </p>
+      <h2>{title}</h2>
 
-      <ReactMarkdown>{data.attributes.Body}</ReactMarkdown>
+      <BlockContent blocks={body} />
     </div>
   );
-}
+};
+
+export default ArticlePage;
