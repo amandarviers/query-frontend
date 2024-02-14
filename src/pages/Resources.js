@@ -25,8 +25,6 @@ const Resources = () => {
     fetchResources();
   }, []);
 
-  console.log(resources);
-
   if (!resources) {
     return <div>Loading...</div>;
   }

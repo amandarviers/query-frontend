@@ -13,13 +13,13 @@ import RecentInternational from "../components/RecentInternational";
 export default function Homepage() {
   return (
     <>
-      <div className="homepage-content">
-        <FeaturedBlogPosts />
-        <div class="additional-articles">
+      <div className="homepageContent">
+        <div className="mainArticle">
+          <FeaturedBlogPosts />
+        </div>
+        <div>
           <OtherNews />
         </div>
-      </div>
-      <div className="homepage-content">
         <div>
           <RecentArts />
         </div>

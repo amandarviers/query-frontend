@@ -29,8 +29,6 @@ const Archive = () => {
     fetchArchive();
   }, []);
 
-  console.log(archive);
-
   if (!archive) {
     return <div>Loading...</div>;
   }

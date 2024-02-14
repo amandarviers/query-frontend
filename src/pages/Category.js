@@ -42,8 +42,6 @@ const CategoryPage = () => {
     fetchPostsByCategory();
   }, [slug]);
 
-  console.log(category);
-
   if (!category) {
     return <div>Loading...</div>;
   }

@@ -4,10 +4,22 @@ import Logo from "../static/logo.png";
 import sanityClient from "../Client";
 import React, { useState, useEffect } from "react";
 
+import { IoMdMenu } from "react-icons/io";
+
 import { RiFacebookCircleFill } from "react-icons/ri";
 import { AiFillTwitterCircle, AiFillInstagram } from "react-icons/ai";
 
 export default function Layout() {
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
   const [categoryLinks, setCategoryLinks] = useState([]);
 
   useEffect(() => {
@@ -36,28 +48,43 @@ export default function Layout() {
           <img src={Logo} alt="Logo" className="mainLogo" />
         </div>
         <nav>
-          <Link to="/">Home</Link>
+          <div className={`navLinks ${isMobileMenuOpen ? "active" : ""}`}>
+            <Link to="/" onClick={closeMobileMenu}>
+              Home
+            </Link>
 
-          <Link to="/about">About</Link>
+            <Link to="/archive" onClick={closeMobileMenu}>
+              Archive
+            </Link>
 
-          {categoryLinks.map((cat) => (
-            <Link to={`/${cat.slug.current}`}>{cat.title}</Link>
-          ))}
+            <Link to="/about" onClick={closeMobileMenu}>
+              About
+            </Link>
 
-          <Link to="/resources">Resources</Link>
+            <Link to="/resources" onClick={closeMobileMenu}>
+              Resources
+            </Link>
 
-          <Link to="/archive">Archive</Link>
+            {categoryLinks.map((cat) => (
+              <Link to={`/${cat.slug.current}`} onClick={closeMobileMenu}>
+                {cat.title}
+              </Link>
+            ))}
 
-          <div className="socials">
-            <a href="https://facebook.com">
-              <RiFacebookCircleFill size={30} />
-            </a>
-            <a href="https://twitter.com">
-              <AiFillTwitterCircle size={30} />
-            </a>
-            <a href="https://instagram.com">
-              <AiFillInstagram size={30} />
-            </a>
+            {/* <div className="socials">
+              <a href="https://facebook.com">
+                <RiFacebookCircleFill size={30} />
+              </a>
+              <a href="https://twitter.com">
+                <AiFillTwitterCircle size={30} />
+              </a>
+              <a href="https://instagram.com">
+                <AiFillInstagram size={30} />
+              </a>
+            </div> */}
+          </div>
+          <div className="menuToggle" onClick={toggleMobileMenu}>
+            <IoMdMenu />
           </div>
         </nav>
       </header>
