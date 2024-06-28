@@ -1,49 +1,54 @@
-import React from "react";
-import useFetch from "../hooks/useFetch";
+import React, { useState, useEffect } from "react";
+import sanityClient from "../Client";
 import { Link } from "react-router-dom";
-import dayjs from "dayjs";
 
-export default function OtherNews() {
-  const { loading, error, data } = useFetch(
-    "http://localhost:1337/api/reviews?sort=publishedAt:desc&filters[featured][$eq]=False"
-  );
+const OtherNews = () => {
+  const [featuredPosts, setFeaturedPosts] = useState([]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error. Refresh and try again.</p>;
+  useEffect(() => {
+    const fetchFeaturedPosts = async () => {
+      try {
+        const data = await sanityClient.fetch(`
+          *[_type == 'post' && featured == false] | order(publishedAt desc) [0..2] {
+            title,
+            slug,
+            summary,
+            publishedAt,
+            body,
+            author->{name}
+          }
+        `);
+        setFeaturedPosts(data);
+      } catch (error) {
+        console.error("Error fetching featured blog posts:", error);
+      }
+    };
+
+    fetchFeaturedPosts();
+  }, []);
 
   return (
-    <>
-      <h1>Other News</h1>
-      {data.slice(0, 4).map((review) => (
-        <div key={review.id} className="review-card">
-          <h2>{review.attributes.Title}</h2>
-
-          <small>
-            {dayjs(review.attributes.publishedAt).format("MMMM D, YYYY h:mm A")}
-          </small>
-
-          <p>
-            {review.attributes.Body.substring(0, 200)}... <br />
-            <Link to={`/article/${review.id}`}>Read more</Link>
+    <div className="featuredArticle">
+      <h1>
+        <span>Recent News</span>
+      </h1>
+      {featuredPosts.map((post, index) => (
+        <div
+          key={post.slug.current}
+          className={index === featuredPosts.length - 1 ? "lastPost" : "post"}
+        >
+          <p className="postDetails">
+            {new Date(post.publishedAt).toLocaleDateString()} &bull;{" "}
+            {post.author.name}
           </p>
-          <hr />
+          <h2>
+            <Link to={`/article/${post.slug.current}`}>{post.title}</Link>
+          </h2>
+          {post.summary}
         </div>
       ))}
-
-      {data.slice(4, 5).map((review) => (
-        <div key={review.id} className="review-card">
-          <h2>{review.attributes.Title}</h2>
-
-          <small>
-            {dayjs(review.attributes.publishedAt).format("MMMM D, YYYY h:mm A")}
-          </small>
-
-          <p>
-            {review.attributes.Body.substring(0, 200)}... <br />
-            <Link to={`/article/${review.id}`}>Read more</Link>
-          </p>
-        </div>
-      ))}
-    </>
+    </div>
   );
-}
+};
+
+export default OtherNews;

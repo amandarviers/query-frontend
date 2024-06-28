@@ -1,13 +1,45 @@
 import { Outlet, Link } from "react-router-dom";
 
 import Logo from "../static/logo.png";
-import React from "react";
+import sanityClient from "../Client";
+import React, { useState, useEffect } from "react";
 
-// import { RiFacebookCircleFill } from "react-icons/ri";
+import { IoMdMenu } from "react-icons/io";
+
+import { RiFacebookCircleFill } from "react-icons/ri";
 import { AiFillTwitterCircle, AiFillInstagram } from "react-icons/ai";
-// import { BsSearchHeart } from "react-icons/bs";
 
 export default function Layout() {
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
+  const [categoryLinks, setCategoryLinks] = useState([]);
+
+  useEffect(() => {
+    const fetchCategoryLinks = async () => {
+      try {
+        const data = await sanityClient.fetch(`
+          *[_type == 'category'] | order(title asc) {
+            title,
+            slug,
+          }
+        `);
+        setCategoryLinks(data);
+      } catch (error) {
+        console.error("Error fetching featured blog posts:", error);
+      }
+    };
+
+    fetchCategoryLinks();
+  }, []);
+
   return (
     <>
       <header>
@@ -16,73 +48,81 @@ export default function Layout() {
           <img src={Logo} alt="Logo" className="mainLogo" />
         </div>
         <nav>
-          <Link to="/">Home</Link>
+          <div className={`navLinks ${isMobileMenuOpen ? "active" : ""}`}>
+            <Link to="/" onClick={closeMobileMenu}>
+              Home
+            </Link>
 
-          <Link to="/about">About</Link>
+            <Link to="/archive" onClick={closeMobileMenu}>
+              Archive
+            </Link>
 
-          <Link to="/contact">Contact</Link>
+            <Link to="/about" onClick={closeMobileMenu}>
+              About
+            </Link>
 
-          <Link to="/resources">Resources</Link>
+            <Link to="/resources" onClick={closeMobileMenu}>
+              Resources
+            </Link>
 
-          <Link to="/videos">Videos</Link>
+            {categoryLinks.map((cat) => (
+              <Link to={`/${cat.slug.current}`} onClick={closeMobileMenu}>
+                {cat.title}
+              </Link>
+            ))}
 
-          <Link to="/photos">Photos</Link>
-
-          <div className="socials">
-            {/* <a href="https://facebook.com">
-              <RiFacebookCircleFill size={30} />
-            </a> */}
-            <a href="https://twitter.com">
-              <AiFillTwitterCircle size={30} />
-            </a>
-            <a href="https://instagram.com">
-              <AiFillInstagram size={30} />
-            </a>
+            {/* <div className="socials">
+              <a href="https://facebook.com">
+                <RiFacebookCircleFill size={30} />
+              </a>
+              <a href="https://twitter.com">
+                <AiFillTwitterCircle size={30} />
+              </a>
+              <a href="https://instagram.com">
+                <AiFillInstagram size={30} />
+              </a>
+            </div> */}
+          </div>
+          <div className="menuToggle" onClick={toggleMobileMenu}>
+            <IoMdMenu />
           </div>
         </nav>
       </header>
 
       <main>
-        <Outlet />
+        <div className="mainContent">
+          <Outlet />
+        </div>
       </main>
 
       <footer>
         <div className="footerContainer">
           <div className="footerLeft">
-            <p>
+            {/* <p align="center">
               Kogi actually helvetica cred keytar occupy single-origin coffee
               asymmetrical gastropub cloud bread man bun messenger bag coloring
               book umami. Air plant distillery ennui, tbh mumblecore readymade
               fingerstache flexitarian pug try-hard ramps tacos bitters grailed.
               Beard listicle lo-fi lumbersexual.
-            </p>
-            <div className="subscribe">
+            </p> */}
+            {/* <div className="subscribe">
               <input type="email" placeholder="Subscribe to receive updates" />
               <button type="submit" className="submit">
                 Submit
               </button>
-            </div>
+            </div> */}
             <p align="center">
-              <em>The Query &copy; 2023</em>
+              <em>The Query &copy; 2024</em>
             </p>
           </div>
           <div className="footerRight">
             <img src={Logo} alt="Logo" className="footerLogo" />
             <ul>
               <li>
-                <a href="#">Staff Directory</a>
+                <Link to="/staff">Staff Directory</Link>
               </li>
               <li>
-                <a href="#">Site Map</a>
-              </li>
-              <li>
-                <a href="#">Terms of Service</a>
-              </li>
-              <li>
-                <a href="#">Privacy Policy</a>
-              </li>
-              <li>
-                <a href="#">Contact Us</a>
+                <Link to="/contact">Contact Us</Link>
               </li>
             </ul>
           </div>

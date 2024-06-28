@@ -4,9 +4,10 @@ import Homepage from "./pages/Homepage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Resources from "./pages/Resources";
-import Videos from "./pages/Videos";
-import Photos from "./pages/Photos";
-import Article from "./pages/Article";
+import Category from "./pages/Category";
+import ArticlePage from "./pages/Article";
+import Archive from "./pages/Archive";
+import Staff from "./pages/Staff";
 import React from "react";
 
 function App() {
@@ -19,9 +20,10 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/resources" element={<Resources />} />
-            <Route path="/videos" element={<Videos />} />
-            <Route path="/photos" element={<Photos />} />
-            <Route path="/article/:id" element={<Article />} />
+            <Route path="/:slug" element={<Category />} />
+            <Route path="/article/:slug" element={<ArticlePage />} />
+            <Route path="/archive" element={<Archive />} />
+            <Route path="/staff" element={<Staff />} />
           </Route>
         </Routes>
       </Router>

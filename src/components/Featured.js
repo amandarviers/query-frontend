@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import sanityClient from "../Client";
-import BlockContent from "@sanity/block-content-to-react";
+import { Link } from "react-router-dom";
 
 const FeaturedBlogPosts = () => {
-  const [featuredPosts, setFeaturedPosts] = useState([]);
+  const [featuredPost, setFeaturedPost] = useState(null); // Change here
 
   useEffect(() => {
-    const fetchFeaturedPosts = async () => {
+    const fetchFeaturedPost = async () => {
       try {
-        // Fetch blog posts with the category 'featured'
         const data = await sanityClient.fetch(`
-          *[_type == 'post'] {
+          *[_type == 'post' && featured == true] | order(publishedAt desc) [0] {
             title,
             slug,
+            summary,
+            author->{name},
             mainImage {
               _type,
               asset->{
@@ -23,32 +24,42 @@ const FeaturedBlogPosts = () => {
             body
           }
         `);
-        setFeaturedPosts(data);
+        setFeaturedPost(data);
       } catch (error) {
         console.error("Error fetching featured blog posts:", error);
       }
     };
 
-    fetchFeaturedPosts();
+    fetchFeaturedPost();
   }, []);
-
-  console.log(featuredPosts);
 
   return (
     <div className="featuredArticle">
-      <h1>Featured Blog Posts</h1>
-      {featuredPosts.map((post) => (
-        <div key={post.slug.current}>
-          {post.mainImage !== undefined && (
-            <img src={post.mainImage.asset.url} alt={post.title} />
+      <h1>
+        <span>Featured Article</span>
+      </h1>
+      {featuredPost && (
+        <div key={featuredPost.slug.current} className="lastPost">
+          {featuredPost.mainImage !== undefined && (
+            <p align="center">
+              <img
+                src={featuredPost.mainImage.asset.url}
+                alt={featuredPost.title}
+              />
+            </p>
           )}
-          <h2>{post.title}</h2>
-          <small>{new Date(post.publishedAt).toLocaleDateString()}</small>
-          <BlockContent blocks={post.body} />
-          {/* <ReactMarkdown>{post.body}</ReactMarkdown>
-          <div dangerouslySetInnerHTML={{ __html: post.body }} /> */}
+          <p className="postDetails">
+            {new Date(featuredPost.publishedAt).toLocaleDateString()} &bull;{" "}
+            {featuredPost.author.name}
+          </p>
+          <h2>
+            <Link to={`/article/${featuredPost.slug.current}`}>
+              {featuredPost.title}
+            </Link>
+          </h2>
+          {featuredPost.summary}
         </div>
-      ))}
+      )}
     </div>
   );
 };
