@@ -10,7 +10,7 @@ const Staff = () => {
       try {
         const data = await sanityClient.fetch(
           `
-            *[_type == 'author'] | order(name asc) {
+            *[_type == 'author'] | order(name desc) {
               name,
               slug,
               image {
