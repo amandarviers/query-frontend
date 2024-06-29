@@ -37,7 +37,7 @@ const Resources = () => {
   const secondHalf = resources.slice(middleIndex);
 
   return (
-    <div>
+    <div className="articlePage">
       <h1>
         <span>Resources</span>
       </h1>
