@@ -270,6 +270,11 @@ input:focus {
   font-size: 1rem;
 }
 
+.submit:active {
+  background-color: #1e1e1e;
+  color: #5bcefa;
+}
+
 li {
   margin-left: 30px;
 }
