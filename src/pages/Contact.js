@@ -10,12 +10,6 @@ const ContactForm = () => {
   const sendEmail = (e) => {
     e.preventDefault();
 
-    console.log({
-      from_name: name,
-      reply_to: email,
-      message: message,
-    });
-
     emailjs
       .sendForm(
         "service_l6fo3n9",
@@ -25,14 +19,12 @@ const ContactForm = () => {
       )
       .then(
         (result) => {
-          console.log(result.text);
-          setStatusMessage("Thank you for contact us!");
+          setStatusMessage("Thank you for contacting us!");
           setName("");
           setEmail("");
           setMessage("");
         },
         (error) => {
-          console.log(error.text);
           setStatusMessage("Error occurred. Please try again.");
         }
       );
