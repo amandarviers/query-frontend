@@ -6,8 +6,8 @@ import React, { useState, useEffect } from "react";
 
 import { IoMdMenu } from "react-icons/io";
 
-import { RiFacebookCircleFill } from "react-icons/ri";
-import { AiFillTwitterCircle, AiFillInstagram } from "react-icons/ai";
+// import { RiFacebookCircleFill } from "react-icons/ri";
+// import { AiFillTwitterCircle, AiFillInstagram } from "react-icons/ai";
 
 export default function Layout() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);

@@ -1,14 +1,33 @@
 import React, { useState } from "react";
+import emailjs from "emailjs-com";
 
 const ContactForm = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [statusMessage, setStatusMessage] = useState("");
 
-  const handleSubmit = async (e) => {
+  const sendEmail = (e) => {
     e.preventDefault();
 
-    console.log("Form submitted:", { name, email, message });
+    emailjs
+      .sendForm(
+        "service_l6fo3n9",
+        "template_sufi43v",
+        e.target,
+        "COkfPBIn0dvihE9ag" // Replace with your actual EmailJS user ID
+      )
+      .then(
+        (result) => {
+          setStatusMessage("Thank you for contacting us!");
+          setName("");
+          setEmail("");
+          setMessage("");
+        },
+        (error) => {
+          setStatusMessage("Error occurred. Please try again.");
+        }
+      );
   };
 
   return (
@@ -16,14 +35,17 @@ const ContactForm = () => {
       <h1>
         <span>Contact Us</span>
       </h1>
+      <p align="center">{statusMessage && <p>{statusMessage}</p>}</p>
       <div className="contactForm">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={sendEmail}>
           <label>
             Name
             <input
               type="text"
               value={name}
+              name="from_name"
               onChange={(e) => setName(e.target.value)}
+              required
             />
           </label>
           <br />
@@ -32,7 +54,9 @@ const ContactForm = () => {
             <input
               type="email"
               value={email}
+              name="reply_to"
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </label>
           <br />
@@ -40,7 +64,9 @@ const ContactForm = () => {
             Message <br />
             <textarea
               value={message}
+              name="message"
               onChange={(e) => setMessage(e.target.value)}
+              required
             />
           </label>
           <br />
